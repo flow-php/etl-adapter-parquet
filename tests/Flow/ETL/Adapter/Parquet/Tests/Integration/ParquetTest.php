@@ -66,8 +66,8 @@ final class ParquetTest extends TestCase
 
         self::assertEquals(
             [
-                ['id' => '1', 'name' => 'test', 'uuid' => new \Flow\ETL\PHP\Value\Uuid('26fd21b0-6080-4d6c-bdb4-1214f1feffef'), 'json' => '[{"id":1,"name":"test"},{"id":2,"name":"test"}]'],
-                ['id' => '2', 'name' => 'test', 'uuid' => new \Flow\ETL\PHP\Value\Uuid('26fd21b0-6080-4d6c-bdb4-1214f1feffef'), 'json' => '[{"id":1,"name":"test"},{"id":2,"name":"test"}]'],
+                ['id' => '1', 'name' => 'test', 'uuid' => new \Flow\ETL\PHP\Value\Uuid('26fd21b0-6080-4d6c-bdb4-1214f1feffef'), 'json' => [['id' => 1, 'name' => 'test'], ['id' => 2, 'name' => 'test']]],
+                ['id' => '2', 'name' => 'test', 'uuid' => new \Flow\ETL\PHP\Value\Uuid('26fd21b0-6080-4d6c-bdb4-1214f1feffef'), 'json' => [['id' => 1, 'name' => 'test'], ['id' => 2, 'name' => 'test']]],
             ],
             df()
                 ->read(from_parquet($path))

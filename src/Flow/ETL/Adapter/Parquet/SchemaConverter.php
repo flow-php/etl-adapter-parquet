@@ -5,25 +5,34 @@ declare(strict_types=1);
 namespace Flow\ETL\Adapter\Parquet;
 
 use function Flow\ETL\DSL\{bool_schema,
+    date_schema,
     datetime_schema,
     float_schema,
     int_schema,
     json_schema,
     list_schema,
     map_schema,
-    object_schema,
     str_schema,
     struct_schema,
     struct_type,
     structure_element,
+    time_schema,
     type_list,
     type_map,
-    type_object,
     uuid_schema};
 use Flow\ETL\Exception\RuntimeException;
 use Flow\ETL\PHP\Type\Logical\Map\{MapKey, MapValue};
 use Flow\ETL\PHP\Type\Logical\Structure\StructureElement;
-use Flow\ETL\PHP\Type\Logical\{DateTimeType, JsonType, ListType, MapType, StructureType, UuidType, XMLElementType, XMLType};
+use Flow\ETL\PHP\Type\Logical\{DateTimeType,
+    DateType,
+    JsonType,
+    ListType,
+    MapType,
+    StructureType,
+    TimeType,
+    UuidType,
+    XMLElementType,
+    XMLType};
 use Flow\ETL\PHP\Type\Native\{ObjectType, ScalarType};
 use Flow\ETL\PHP\Type\Type;
 use Flow\ETL\PHP\Value\Uuid;
@@ -78,6 +87,10 @@ final class SchemaConverter
                 break;
             case DateTimeType::class:
                 return ListElement::datetime(!$element->nullable());
+            case DateType::class:
+                return ListElement::date(!$element->nullable());
+            case TimeType::class:
+                return ListElement::time(!$element->nullable());
             case UuidType::class:
                 return ListElement::uuid(!$element->nullable());
             case JsonType::class:
@@ -117,6 +130,10 @@ final class SchemaConverter
                 return ParquetSchema\MapKey::uuid();
             case DateTimeType::class:
                 return ParquetSchema\MapKey::datetime();
+            case DateType::class:
+                return ParquetSchema\MapKey::date();
+            case TimeType::class:
+                return ParquetSchema\MapKey::time();
             case ScalarType::class:
                 switch ($mapKeyType->type()) {
                     case ScalarType::FLOAT:
@@ -155,6 +172,10 @@ final class SchemaConverter
                 break;
             case UuidType::class:
                 return ParquetSchema\MapValue::uuid(!$mapValueType->nullable());
+            case DateType::class:
+                return ParquetSchema\MapValue::date(!$mapValueType->nullable());
+            case TimeType::class:
+                return ParquetSchema\MapValue::time(!$mapValueType->nullable());
             case DateTimeType::class:
                 return ParquetSchema\MapValue::datetime(!$mapValueType->nullable());
             case JsonType::class:
@@ -237,6 +258,10 @@ final class SchemaConverter
         switch ($type::class) {
             case ScalarType::class:
                 return $this->flowScalarToParquetFlat($type, $name);
+            case TimeType::class:
+                return FlatColumn::time($name, $type->nullable() ? ParquetSchema\Repetition::OPTIONAL : ParquetSchema\Repetition::REQUIRED);
+            case DateType::class:
+                return FlatColumn::date($name, $type->nullable() ? ParquetSchema\Repetition::OPTIONAL : ParquetSchema\Repetition::REQUIRED);
             case DateTimeType::class:
                 return FlatColumn::datetime($name, $type->nullable() ? ParquetSchema\Repetition::OPTIONAL : ParquetSchema\Repetition::REQUIRED);
             case UuidType::class:
@@ -283,7 +308,7 @@ final class SchemaConverter
         if ($logicalType === null) {
             return match ($column->type()) {
                 ParquetSchema\PhysicalType::INT32 => match ($column->convertedType()) {
-                    ParquetSchema\ConvertedType::DATE => datetime_schema($column->name(), $nullable),
+                    ParquetSchema\ConvertedType::DATE => date_schema($column->name(), $nullable),
                     default => int_schema($column->name(), $nullable),
                 },
                 ParquetSchema\PhysicalType::INT64 => int_schema($column->name(), $nullable),
@@ -297,8 +322,8 @@ final class SchemaConverter
 
         return match ($logicalType->name()) {
             ParquetSchema\LogicalType::STRING => str_schema($column->name(), $nullable),
-            ParquetSchema\LogicalType::DATE => datetime_schema($column->name(), $nullable),
-            ParquetSchema\LogicalType::TIME => object_schema($column->name(), type_object(\DateInterval::class, $nullable)),
+            ParquetSchema\LogicalType::TIME => time_schema($column->name(), $nullable),
+            ParquetSchema\LogicalType::DATE => date_schema($column->name(), $nullable),
             ParquetSchema\LogicalType::TIMESTAMP => datetime_schema($column->name(), $nullable),
             ParquetSchema\LogicalType::UUID => uuid_schema($column->name(), $nullable),
             ParquetSchema\LogicalType::JSON => json_schema($column->name(), $nullable),
