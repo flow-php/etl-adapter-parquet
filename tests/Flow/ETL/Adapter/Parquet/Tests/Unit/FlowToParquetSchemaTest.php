@@ -11,11 +11,11 @@ use Flow\ETL\PHP\Type\Logical\Map\{MapKey, MapValue};
 use Flow\ETL\PHP\Type\Logical\Structure\StructureElement;
 use Flow\ETL\PHP\Type\Logical\{ListType, MapType, StructureType};
 use Flow\ETL\Row\Schema;
+use Flow\ETL\Tests\FlowTestCase;
 use Flow\Parquet\ParquetFile\Schema as ParquetSchema;
 use Flow\Parquet\ParquetFile\Schema\{FlatColumn, NestedColumn};
-use PHPUnit\Framework\TestCase;
 
-final class FlowToParquetSchemaTest extends TestCase
+final class FlowToParquetSchemaTest extends FlowTestCase
 {
     public function test_convert_etl_entries_to_parquet_fields() : void
     {

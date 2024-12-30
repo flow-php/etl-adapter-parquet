@@ -25,11 +25,11 @@ use function Flow\ETL\DSL\{bool_schema,
     type_uuid,
     uuid_schema};
 use Flow\ETL\Adapter\Parquet\SchemaConverter;
+use Flow\ETL\Tests\FlowTestCase;
 use Flow\Parquet\ParquetFile\Schema;
 use Flow\Parquet\ParquetFile\Schema\{MapKey, MapValue};
-use PHPUnit\Framework\TestCase;
 
-final class ParquetToFlowSchemaTest extends TestCase
+final class ParquetToFlowSchemaTest extends FlowTestCase
 {
     public function test_converting_flat_fields_to_flow_schema() : void
     {

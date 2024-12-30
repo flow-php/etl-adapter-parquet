@@ -8,9 +8,9 @@ use function Flow\ETL\DSL\{row, rows, schema, str_entry, str_schema};
 use Flow\ETL\Adapter\Parquet\RowsNormalizer;
 use Flow\ETL\Exception\CastingException;
 use Flow\ETL\PHP\Type\Caster;
-use PHPUnit\Framework\TestCase;
+use Flow\ETL\Tests\FlowTestCase;
 
-final class RowsNormalizerTest extends TestCase
+final class RowsNormalizerTest extends FlowTestCase
 {
     public function test_casting_error() : void
     {

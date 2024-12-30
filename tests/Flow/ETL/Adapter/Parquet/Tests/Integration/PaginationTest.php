@@ -6,11 +6,11 @@ namespace Flow\ETL\Adapter\Parquet\Tests\Integration;
 
 use function Flow\ETL\DSL\{config, flow_context};
 use Flow\ETL\Adapter\Parquet\ParquetExtractor;
+use Flow\ETL\Tests\FlowTestCase;
 use Flow\Filesystem\Path;
 use Flow\Parquet\{Reader};
-use PHPUnit\Framework\TestCase;
 
-final class PaginationTest extends TestCase
+final class PaginationTest extends FlowTestCase
 {
     public function test_multifile_pagination_from_beginning() : void
     {

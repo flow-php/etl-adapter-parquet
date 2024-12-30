@@ -6,12 +6,11 @@ namespace Flow\ETL\Adapter\Parquet\Tests\Integration;
 
 use Flow\ETL\Adapter\Parquet\ParquetExtractor;
 use Flow\ETL\Extractor\Signal;
-use Flow\ETL\{Config, FlowContext};
+use Flow\ETL\{Config, FlowContext, Tests\FlowTestCase};
 use Flow\Filesystem\Path;
 use Flow\Parquet\{Options, Reader};
-use PHPUnit\Framework\TestCase;
 
-final class ParquetExtractorTest extends TestCase
+final class ParquetExtractorTest extends FlowTestCase
 {
     public function test_limit() : void
     {

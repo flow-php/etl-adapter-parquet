@@ -7,13 +7,12 @@ namespace Flow\ETL\Adapter\Parquet\Tests\Integration;
 use function Flow\ETL\Adapter\Parquet\{from_parquet, to_parquet};
 use function Flow\ETL\DSL\{df, from_array, json_schema, schema, str_schema};
 use Flow\ETL\Tests\Double\FakeExtractor;
-use Flow\ETL\{Flow};
+use Flow\ETL\{Flow, Tests\FlowTestCase};
 use Flow\Parquet\ParquetFile\Compressions;
 use Flow\Parquet\Reader;
-use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
-final class ParquetTest extends TestCase
+final class ParquetTest extends FlowTestCase
 {
     public function test_writing_to_file() : void
     {
