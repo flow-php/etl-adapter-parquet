@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Flow\ETL\Adapter\Parquet\Tests\Integration;
 
 use function Flow\ETL\Adapter\Parquet\{from_parquet, to_parquet};
-use function Flow\ETL\DSL\data_frame;
 use function Flow\ETL\DSL\{config, from_array, json_schema, schema, str_schema};
+use function Flow\ETL\DSL\data_frame;
 use function Flow\Filesystem\DSL\{path};
 use Flow\ETL\Tests\Double\FakeExtractor;
 use Flow\ETL\{Tests\FlowTestCase};
