@@ -15,14 +15,15 @@ use function Flow\ETL\DSL\{bool_schema,
     str_schema,
     struct_schema,
     time_schema,
-    type_boolean,
-    type_int,
+    uuid_schema};
+use function Flow\Types\DSL\{type_boolean,
+    type_integer,
     type_list,
     type_map,
+    type_optional,
     type_string,
-    type_structure,
-    type_uuid,
-    uuid_schema};
+    type_structure};
+use function Flow\Types\DSL\type_uuid;
 use Flow\ETL\Adapter\Parquet\SchemaConverter;
 use Flow\ETL\Tests\FlowTestCase;
 use Flow\Parquet\ParquetFile\Schema;
@@ -79,7 +80,7 @@ final class ParquetToFlowSchemaTest extends FlowTestCase
 
         self::assertEquals(
             \Flow\ETL\DSL\schema(
-                list_schema('list', type_list(type_string(true), true))
+                list_schema('list', type_list(type_optional(type_string())), true)
             ),
             $flowSchema,
         );
@@ -95,7 +96,7 @@ final class ParquetToFlowSchemaTest extends FlowTestCase
 
         self::assertEquals(
             \Flow\ETL\DSL\schema(
-                map_schema('map', type_map(type_string(), type_int(true), true))
+                map_schema('map', type_map(type_string(), type_optional(type_integer())), true)
             ),
             $flowSchema,
         );
@@ -122,12 +123,12 @@ final class ParquetToFlowSchemaTest extends FlowTestCase
                     'struct',
                     type_structure(
                         [
-                            'uuid' => type_uuid(true),
-                            'name' => type_string(true),
-                            'active' => type_boolean(true),
+                            'uuid' => type_optional(type_uuid()),
+                            'name' => type_optional(type_string()),
+                            'active' => type_optional(type_boolean()),
                         ],
-                        true
                     ),
+                    true
                 )
             ),
             $flowSchema,

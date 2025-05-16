@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Flow\ETL\Adapter\Parquet;
 
 use Flow\ETL\{FlowContext, Loader, Rows};
-use Flow\ETL\Loader\Closure;
-use Flow\ETL\PHP\Type\Caster;
+use Flow\ETL\Loader\{Closure, FileLoader};
 use Flow\ETL\Schema;
 use Flow\Filesystem\Path;
 use Flow\Parquet\{Options, Writer};
 use Flow\Parquet\ParquetFile\Compressions;
 
-final class ParquetLoader implements Closure, Loader, Loader\FileLoader
+final class ParquetLoader implements Closure, FileLoader, Loader
 {
     private Compressions $compressions = Compressions::SNAPPY;
 
@@ -34,7 +33,7 @@ final class ParquetLoader implements Closure, Loader, Loader\FileLoader
     public function __construct(private readonly Path $path)
     {
         $this->converter = new SchemaConverter();
-        $this->normalizer = new RowsNormalizer(Caster::default());
+        $this->normalizer = new RowsNormalizer();
         $this->options = Options::default();
     }
 
