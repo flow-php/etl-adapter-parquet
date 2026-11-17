@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Flow\ETL\Adapter\Parquet\Tests\Unit\IO;
 
 use Flow\ETL\Adapter\Parquet\IO\ConfiguredParquetEngine;
+use Flow\ETL\Adapter\Parquet\IO\Engine\FlowPhpParquetEngine;
 use Flow\ETL\Adapter\Parquet\Tests\Double\RefusingParquetEngine;
 use Flow\ETL\Foundation\Describe\Rebuild;
 use Flow\ETL\Foundation\Exception\InvalidArgumentException;
 use Flow\ETL\Tests\FlowTestCase;
 use Flow\Parquet\Engine\PhpParquetEngine;
+use Flow\Parquet\Engine\RustParquetEngine;
 use Flow\Parquet\Option;
 use Flow\Parquet\Options;
+use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 
 use function array_filter;
 use function extension_loaded;
@@ -30,6 +33,58 @@ final class ConfiguredParquetEngineTest extends FlowTestCase
         static::assertEquals(
             $engine,
             (new Rebuild())->of($description->normalize(), ConfiguredParquetEngine::class)->engine(),
+        );
+    }
+
+    #[RequiresPhpExtension('arrow')]
+    public function test_an_arrow_engine_round_trips(): void
+    {
+        $engine = new RustParquetEngine(Options::default()->set(Option::PAGE_SIZE_BYTES, 7));
+        $description = (new ConfiguredParquetEngine($engine))->describe();
+
+        static::assertNotNull($description);
+        static::assertSame(RustParquetEngine::class, $description->data['engine']);
+        static::assertSame(
+            $engine->normalize(),
+            (new Rebuild())
+                ->of($description->normalize(), ConfiguredParquetEngine::class)
+                ->engine()
+                ->normalize(),
+        );
+    }
+
+    #[RequiresPhpExtension('flow_php')]
+    public function test_a_flow_php_engine_round_trips(): void
+    {
+        $engine = new FlowPhpParquetEngine(Options::default()->set(Option::PAGE_SIZE_BYTES, 7));
+        $description = (new ConfiguredParquetEngine($engine))->describe();
+
+        static::assertNotNull($description);
+        static::assertSame(FlowPhpParquetEngine::class, $description->data['engine']);
+        static::assertSame(
+            $engine->normalize(),
+            (new Rebuild())
+                ->of($description->normalize(), ConfiguredParquetEngine::class)
+                ->engine()
+                ->normalize(),
+        );
+    }
+
+    #[RequiresPhpExtension('flow_php')]
+    public function test_a_flow_php_engine_declares_flow_php_and_no_codec(): void
+    {
+        static::assertSame(
+            ['bcmath', 'flow_php', 'json', 'zlib'],
+            (new ConfiguredParquetEngine(new FlowPhpParquetEngine()))->describe()?->extensions(),
+        );
+    }
+
+    #[RequiresPhpExtension('arrow')]
+    public function test_an_arrow_engine_declares_arrow_and_no_codec(): void
+    {
+        static::assertSame(
+            ['arrow', 'bcmath', 'json', 'zlib'],
+            (new ConfiguredParquetEngine(new RustParquetEngine()))->describe()?->extensions(),
         );
     }
 
